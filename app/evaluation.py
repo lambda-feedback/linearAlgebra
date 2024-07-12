@@ -33,4 +33,22 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
     to output the evaluation response.
     """
 
+    """
+    Comments specific to working with linear algebra and the MATRIX response type
+    ---
+    If the matrix response type is used the response and answer parameters will be
+    a list of lists where the inner list corresponds to a row in the matrix.
+    It is also likely that it would be useful to have an input that only uses text,
+    i.e. that can be used with the EXPRESSION type, but accepts a more varied and
+    less clumsy syntax for defining matrices and vectors than sympy does, i.e.
+    the input needs to be translated to convenient sympy syntax, and assumes that
+    symbols are matrices or vectors rather than real numbers (though deciding how
+    to let the user define the dimensions of the objects will require some thought).
+    For different ways to define matrices in sympy, see 
+    https://docs.sympy.org/latest/modules/matrices/matrices.html
+    It is not necessary to implement both types of input if you only need one for
+    the module you are puttin content in, it might even be better to make sure one
+    type is supported robustly rather being able to handle both poorly.
+    """
+
     return Result(is_correct=True)
