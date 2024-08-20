@@ -31,6 +31,31 @@ class TestEvaluationFunction(unittest.TestCase):
 
         self.assertEqual(result.get("is_correct"), True)
 
+    def test_2D_empty_string_in_answer(self):
+        response = [[1, 1], [1, 1]]
+        answer = [["", ""], ["", ""]]
+
+        response = evaluation_function(response, answer, {})
+
+        self.assertEqual(response.get("is_correct"), False)
+
+    def test_no_tolerance_correct(self):
+        response = [1, 2]
+        answer = [1, 2]
+
+        response = evaluation_function(response, answer, {})
+
+        self.assertEqual(response.get("is_correct"), True)
+
+    def test_2D_with_different_offset(self):
+        response = [[-1, 1], [1, 1]]
+        answer = [[-1, 0], [1, 2]]
+
+        response = evaluation_function(response, answer, {})
+
+        self.assertEqual(response.get("is_correct"), True)
+        
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity=2)
+    

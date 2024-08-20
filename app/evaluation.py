@@ -1,5 +1,7 @@
 from typing import Any, TypedDict
-
+import numpy as np
+from numpy import linalg as LA
+#from evaluation_function_utils.errors import EvaluationException
 
 class Params(TypedDict):
     pass
@@ -51,5 +53,89 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
     the module you are puttin content in, it might even be better to make sure one
     type is supported robustly rather being able to handle both poorly.
     """
+    
+
+    #empty set
+    if is_empty(response) and is_empty(answer):
+        
+        return Result(is_correct=True)
+    
+    #different dimensions
+    if len(response) != len(answer):
+        return Result(is_correct=False)
+
+    
+    #set empty to zero and convert strings to floats
+    response = to_floats(response)
+    answer = to_floats(answer)
+
+    #convert to numpy
+    try:
+        res = np.array(response, dtype=np.float32)
+        ans = np.array(answer, dtype=np.float32)
+    except Exception as e:
+        #raise EvaluationException(f"Failed to parse user response", detail=repr(e))
+        raise Exception(f"Failed to parse user response", detail=repr(e))
+    
+    if res.ndim == 1:
+        res = np.array([res])
+    if ans.ndim == 1:
+        ans = np.array([ans])
+    
+    #transpose for easier access to columns
+    #last column is constant     
+    resconst = res[ :,-1]
+    ansconst = ans[ :,-1]
+
+    resspan = res[ :, :-1]
+    ansspan = ans[ :, :-1]
+    
+
+    #check if vector space is equal
+    if not equal_vector_space(resspan, ansspan):
+        return Result(is_correct=False)
+
+    #check if affie space is equal
+    diff = resconst - ansconst
+    try:
+        LA.solve(ansspan, diff)
+    except LA.LinAlgError:
+        return Result(is_correct=False)
+    
 
     return Result(is_correct=True)
+
+
+def is_empty(element):
+    is_ok = False
+    if isinstance(element,list):
+        is_ok = all([is_empty(e) for e in element])
+    elif element is None:
+        is_ok = True
+    elif isinstance(element,str):
+        element = element.strip()
+        if len(element) == 0:
+            is_ok = True
+    return is_ok
+
+def to_floats(element):
+    if isinstance(element,list):
+        return [to_floats(e) for e in element]
+    else:
+        if isinstance(element,str):
+            element = element.strip()
+            if len(element) == 0 or element == "undefined":
+                return 0
+            else:
+                element = float(element)
+    return element
+
+def equal_vector_space(v1, v2):
+    for v in np.transpose(v1):
+        try:
+            #exists a linear combination of v2 for each vector v in v1
+            LA.solve(v2, v)
+        except LA.LinAlgError:
+            return False
+    return True
+
