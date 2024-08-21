@@ -95,15 +95,14 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
     if not equal_vector_space(resspan, ansspan):
         return Result(is_correct=False)
 
-    #check if affie space is equal
+    #check if affine space is equal
     diff = resconst - ansconst
-    try:
-        LA.solve(ansspan, diff)
-    except LA.LinAlgError:
-        return Result(is_correct=False)
-    
 
-    return Result(is_correct=True)
+    #np.linalg.solve(ansspan, diff)
+    residual = np.linalg.lstsq(ansspan, diff, rcond=None)[1]
+    
+    return Result(is_correct=np.allclose(residual, 0))
+
 
 
 def is_empty(element):
@@ -131,11 +130,7 @@ def to_floats(element):
     return element
 
 def equal_vector_space(v1, v2):
-    for v in np.transpose(v1):
-        try:
-            #exists a linear combination of v2 for each vector v in v1
-            LA.solve(v2, v)
-        except LA.LinAlgError:
-            return False
-    return True
+    m = np.hstack((v1,v2))
+
+    return LA.matrix_rank(v1) == LA.matrix_rank(v2) and LA.matrix_rank(v2) == LA.matrix_rank(m)
 

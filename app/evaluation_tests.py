@@ -54,6 +54,14 @@ class TestEvaluationFunction(unittest.TestCase):
         response = evaluation_function(response, answer, {})
 
         self.assertEqual(response.get("is_correct"), True)
+
+    def test_2D_with_slightly_different_span(self):
+        response = [[-1, 1], [1, 1]]
+        answer = [[-1, 1], [1.00001, 1]]
+
+        response = evaluation_function(response, answer, {})
+
+        self.assertEqual(response.get("is_correct"), False)
         
 
 if __name__ == "__main__":
