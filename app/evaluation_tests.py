@@ -62,6 +62,14 @@ class TestEvaluationFunction(unittest.TestCase):
         response = evaluation_function(response, answer, {})
 
         self.assertEqual(response.get("is_correct"), False)
+
+    def test_3D_with_different_span_no_offset(self):
+        response = [[1, 6, 4], [2, 4, -1], [-1, 2, 5], [0, 0, 0]]
+        answer = [[1, -2, -5], [0, 8, 9], [0, 0, 0]]
+
+        response = evaluation_function(response, answer, {})
+
+        self.assertEqual(response.get("is_correct"), False)
         
 
 if __name__ == "__main__":
