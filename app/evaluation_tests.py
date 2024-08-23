@@ -31,6 +31,47 @@ class TestEvaluationFunction(unittest.TestCase):
 
         self.assertEqual(result.get("is_correct"), True)
 
+    def test_2D_empty_string_in_answer(self):
+        response = [[1, 1], [1, 1]]
+        answer = [["", ""], ["", ""]]
+
+        response = evaluation_function(response, answer, {})
+
+        self.assertEqual(response.get("is_correct"), False)
+
+    def test_no_tolerance_correct(self):
+        response = [1, 2]
+        answer = [1, 2]
+
+        response = evaluation_function(response, answer, {})
+
+        self.assertEqual(response.get("is_correct"), True)
+
+    def test_2D_with_different_offset(self):
+        response = [[-1, 1], [1, 1]]
+        answer = [[-1, 0], [1, 2]]
+
+        response = evaluation_function(response, answer, {})
+
+        self.assertEqual(response.get("is_correct"), True)
+
+    def test_2D_with_slightly_different_span(self):
+        response = [[-1, 1], [1, 1]]
+        answer = [[-1, 1], [1.00001, 1]]
+
+        response = evaluation_function(response, answer, {})
+
+        self.assertEqual(response.get("is_correct"), False)
+
+    def test_3D_with_different_span_no_offset(self):
+        response = [[1, 6, 4], [2, 4, -1], [-1, 2, 5], [0, 0, 0]]
+        answer = [[1, -2, -5], [0, 8, 9], [0, 0, 0]]
+
+        response = evaluation_function(response, answer, {})
+
+        self.assertEqual(response.get("is_correct"), False)
+        
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity=2)
+    
