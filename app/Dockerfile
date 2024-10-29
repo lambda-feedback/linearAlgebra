@@ -1,6 +1,6 @@
 # Base image that bundles AWS Lambda Python 3.8 image with some middleware functions
 # FROM base-eval-tmp
-FROM ghcr.io/lambda-feedback/baseevalutionfunctionlayer:testing-3.10
+FROM ghcr.io/lambda-feedback/baseevalutionfunctionlayer:main-3.10
 
 WORKDIR /app
 
@@ -25,4 +25,4 @@ RUN chmod 644 $(find . -type f)
 RUN chmod 755 $(find . -type d)
 
 # The entrypoint for AWS is to invoke the handler function within the app package
-CMD [ "/app/app.handler" ]
+CMD [ "app.app.handler" ]
