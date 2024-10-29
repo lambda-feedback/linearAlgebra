@@ -57,6 +57,7 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
 
     #empty set
     if is_empty(response) and is_empty(answer):
+        
         return Result(is_correct=True)
     
     #different dimensions
